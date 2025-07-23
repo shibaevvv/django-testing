@@ -33,8 +33,10 @@ def test_pages_availability_for_anonymous_user(client, url, url_logout):
         (lazy_fixture('author_client'), HTTPStatus.OK)
     ],
 )
-@pytest.mark.parametrize('url',
-                         (lazy_fixture('url_edit_comment'), lazy_fixture('url_delete_comment'),),)
+@pytest.mark.parametrize(
+    'url',
+    (lazy_fixture('url_edit_comment'), lazy_fixture('url_delete_comment'),)
+)
 def test_pages_availability_for_different_users(
         parametrized_client, expected_status, url
 ):
@@ -47,8 +49,10 @@ def test_pages_availability_for_different_users(
     assert parametrized_client.get(url).status_code == expected_status
 
 
-@pytest.mark.parametrize('url',
-                         (lazy_fixture('url_edit_comment'), lazy_fixture('url_delete_comment'),),)
+@pytest.mark.parametrize(
+    'url',
+    (lazy_fixture('url_edit_comment'), lazy_fixture('url_delete_comment'),)
+)
 def test_redirects(client, url, url_login):
     """
     Проверка перенаправления анонимного пользователя на страницу
