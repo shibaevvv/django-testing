@@ -1,39 +1,43 @@
 from http import HTTPStatus
 
-from .base_test_class import TestBaseClass
+from . import base_test_class as cfg
+
+OK = HTTPStatus.OK
+NOT_FOUND = HTTPStatus.NOT_FOUND
+FOUND = HTTPStatus.FOUND
 
 
-class TestRoutes(TestBaseClass):
+class TestRoutes(cfg.TestBaseClass):
 
     def test_pages_availability(self):
         """
         Тест проверяет доступность страниц анонимному пользователю,
         аутентифицированому и автору заметок.
         """
-        urls = (
-            (self.urls['home'], self.client, HTTPStatus.OK),
-            (self.urls['login'], self.client, HTTPStatus.OK),
-            (self.urls['logout'], self.client, HTTPStatus.OK),
-            (self.urls['signup'], self.client, HTTPStatus.OK),
-            (self.urls['list'], self.author_client, HTTPStatus.OK),
-            (self.urls['add'], self.author_client, HTTPStatus.OK),
-            (self.urls['success'], self.author_client, HTTPStatus.OK),
-            (self.urls['detail'], self.author_client, HTTPStatus.OK),
-            (self.urls['edit'], self.author_client, HTTPStatus.OK),
-            (self.urls['delete'], self.author_client, HTTPStatus.OK),
-            (self.urls['detail'], self.not_author_client,
-             HTTPStatus.NOT_FOUND),
-            (self.urls['edit'], self.not_author_client, HTTPStatus.NOT_FOUND),
-            (self.urls['delete'], self.not_author_client,
-             HTTPStatus.NOT_FOUND),
-        )
-        for url, client, expected_status in urls:
+        for url, client_method, expected_status in [
+            (cfg.URL_HOME, self.client.get, OK),
+            (cfg.URL_LOGIN, self.client.get, OK),
+            (cfg.URL_LOGOUT, self.client.post, OK),
+            (cfg.URL_SIGNUP, self.client.get, OK),
+            (cfg.URL_LIST, self.author_client.get, OK),
+            (cfg.URL_ADD, self.author_client.get, OK),
+            (cfg.URL_SUCCESS, self.author_client.get, OK),
+            (cfg.URL_DETAIL, self.author_client.get, OK),
+            (cfg.URL_EDIT, self.author_client.get, OK),
+            (cfg.URL_DELETE, self.author_client.get, OK),
+            (cfg.URL_DETAIL, self.not_author_client.get, NOT_FOUND),
+            (cfg.URL_EDIT, self.not_author_client.get, NOT_FOUND),
+            (cfg.URL_DELETE, self.not_author_client.get, NOT_FOUND),
+            (cfg.URL_LIST, self.client.get, FOUND),
+            (cfg.URL_ADD, self.client.get, FOUND),
+            (cfg.URL_SUCCESS, self.client.get, FOUND),
+            (cfg.URL_DETAIL, self.client.get, FOUND),
+            (cfg.URL_EDIT, self.client.get, FOUND),
+            (cfg.URL_DELETE, self.client.get, FOUND),
+        ]:
             with self.subTest(url=url):
-                request_type = client.post if url == self.urls['logout'] else (
-                    client.get
-                )
                 self.assertEqual(
-                    request_type(url).status_code, expected_status)
+                    client_method(url).status_code, expected_status)
 
     def test_redirect_for_anonymous_client(self):
         """
@@ -41,17 +45,13 @@ class TestRoutes(TestBaseClass):
         если он пытается получить доступ к страницам для
         авторизованных пользователей.
         """
-        urls = (
-            self.urls['list'],
-            self.urls['add'],
-            self.urls['success'],
-            self.urls['detail'],
-            self.urls['edit'],
-            self.urls['delete'],
-        )
-        for url in urls:
+        for url, redirect in [
+            [cfg.URL_LIST, cfg.URL_REDIRECT_LIST],
+            [cfg.URL_ADD, cfg.URL_REDIRECT_ADD],
+            [cfg.URL_SUCCESS, cfg.URL_REDIRECT_SUCCESS],
+            [cfg.URL_DETAIL, cfg.URL_REDIRECT_DETAIL],
+            [cfg.URL_EDIT, cfg.URL_REDIRECT_EDIT],
+            [cfg.URL_DELETE, cfg.URL_REDIRECT_DELETE]
+        ]:
             with self.subTest(url=url):
-                self.assertRedirects(
-                    self.client.get(url),
-                    f'{self.urls['login']}?next={url}'
-                )
+                self.assertRedirects(self.client.get(url), redirect)

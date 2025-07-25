@@ -4,6 +4,7 @@ import pytest
 from django.conf import settings
 from django.test.client import Client
 from django.urls import reverse
+from django.utils import timezone
 
 from news.models import Comment, News
 
@@ -38,17 +39,12 @@ def news(author):
 
 
 @pytest.fixture
-def news_id(news):
-    return (news.pk,)
-
-
-@pytest.fixture
 def news_collection(author):
-    return News.objects.bulk_create(
+    News.objects.bulk_create(
         News(
             title=f'Новость {index}',
             text='Текст новости.',
-            date=datetime.today() - timedelta(days=index)
+            date=datetime.now() - timedelta(days=index)
         ) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     )
 
@@ -63,27 +59,12 @@ def comment(author, news):
 
 
 @pytest.fixture
-def comment_id(comment):
-    return (comment.pk,)
-
-
-@pytest.fixture
 def comment_collection(author, news):
-    return Comment.objects.bulk_create(
-        Comment(
-            news=news,
-            author=author,
-            text=f'Текст {index}',
-            created=datetime.today() - timedelta(days=index)
-        ) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
-    )
-
-
-@pytest.fixture
-def form_data():
-    return {
-        'text': 'Отредактированный комментарий'
-    }
+    for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1):
+        comment = Comment.objects.create(
+            news=news, author=author, text=f'Текст {index}')
+        comment.created = timezone.now() - timedelta(days=index)
+        comment.save()
 
 
 @pytest.fixture
@@ -92,8 +73,8 @@ def url_home():
 
 
 @pytest.fixture
-def url_news_detail(news_id):
-    return reverse('news:detail', args=news_id)
+def url_news_detail(news):
+    return reverse('news:detail', args=(news.pk,))
 
 
 @pytest.fixture
@@ -112,10 +93,30 @@ def url_signup():
 
 
 @pytest.fixture
-def url_delete_comment(comment_id):
-    return reverse('news:delete', args=comment_id)
+def url_delete_comment(comment):
+    return reverse('news:delete', args=(comment.pk,))
 
 
 @pytest.fixture
-def url_edit_comment(comment_id):
-    return reverse('news:edit', args=comment_id)
+def url_edit_comment(comment):
+    return reverse('news:edit', args=(comment.pk,))
+
+
+@pytest.fixture
+def redirect_news_comments(url_news_detail):
+    return f'{url_news_detail}#comments'
+
+
+@pytest.fixture
+def redirect_comment_edit(url_login, url_edit_comment):
+    return f'{url_login}?next={url_edit_comment}'
+
+
+@pytest.fixture
+def redirect_comment_delete(url_login, url_delete_comment):
+    return f'{url_login}?next={url_delete_comment}'
+
+
+@pytest.fixture
+def redirect_news_detail(url_login, url_news_detail):
+    return f'{url_login}?next={url_news_detail}'
