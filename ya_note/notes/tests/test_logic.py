@@ -39,7 +39,7 @@ class TestLogic(TestBaseClass):
             self.client.post(ADD_URL, data=self.form_data),
             REDIRECT_TO_ADD_URL
         )
-        self.assertQuerySetEqual(notes_obj_before, set(Note.objects.all()))
+        self.assertEqual(notes_obj_before, set(Note.objects.all()))
 
     def test_empty_slug(self):
         """
@@ -59,7 +59,7 @@ class TestLogic(TestBaseClass):
             'slug',
             errors=(self.note.slug + WARNING)
         )
-        self.assertQuerySetEqual(notes_obj_before, set(Note.objects.all()))
+        self.assertEqual(notes_obj_before, set(Note.objects.all()))
 
     def test_author_can_edit_note(self):
         """Проверка, что автор может редактировать свои заметки."""
@@ -105,7 +105,7 @@ class TestLogic(TestBaseClass):
             HTTPStatus.NOT_FOUND
         )
         self.assertEqual(notes_count_before, Note.objects.count())
-        self.assertQuerySetEqual(notes_obj_before, set(Note.objects.all()))
+        self.assertEqual(notes_obj_before, set(Note.objects.all()))
         note_from_db = Note.objects.get(id=self.note.id)
         self.assertEqual(note_from_db.title, self.note.title)
         self.assertEqual(note_from_db.text, self.note.text)
