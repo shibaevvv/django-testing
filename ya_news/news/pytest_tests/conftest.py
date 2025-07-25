@@ -68,55 +68,55 @@ def comment_collection(author, news):
 
 
 @pytest.fixture
-def url_home():
+def home_url():
     return reverse('news:home')
 
 
 @pytest.fixture
-def url_news_detail(news):
+def news_detail_url(news):
     return reverse('news:detail', args=(news.pk,))
 
 
 @pytest.fixture
-def url_login():
+def login_url():
     return reverse('users:login')
 
 
 @pytest.fixture
-def url_logout():
+def logout_url():
     return reverse('users:logout')
 
 
 @pytest.fixture
-def url_signup():
+def signup_url():
     return reverse('users:signup')
 
 
 @pytest.fixture
-def url_delete_comment(comment):
+def delete_comment_url(comment):
     return reverse('news:delete', args=(comment.pk,))
 
 
 @pytest.fixture
-def url_edit_comment(comment):
+def edit_comment_url(comment):
     return reverse('news:edit', args=(comment.pk,))
 
 
 @pytest.fixture
-def redirect_news_comments(url_news_detail):
-    return f'{url_news_detail}#comments'
+def redirect_to_news_comments_url(news_detail_url):
+    return f'{news_detail_url}#comments'
 
 
 @pytest.fixture
-def redirect_comment_edit(url_login, url_edit_comment):
-    return f'{url_login}?next={url_edit_comment}'
+def redirect_to_comment_edit_url(login_url, edit_comment_url):
+    return f'{login_url}?next={edit_comment_url}'
 
 
 @pytest.fixture
-def redirect_comment_delete(url_login, url_delete_comment):
-    return f'{url_login}?next={url_delete_comment}'
+def redirect_to_comment_delete_url(login_url, delete_comment_url):
+    return f'{login_url}?next={delete_comment_url}'
 
 
 @pytest.fixture
-def redirect_news_detail(url_login, url_news_detail):
-    return f'{url_login}?next={url_news_detail}'
+def redirect_to_news_detail_url(login_url, news_detail_url):
+    return f'{login_url}?next={news_detail_url}'

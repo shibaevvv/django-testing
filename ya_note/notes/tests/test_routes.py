@@ -1,13 +1,13 @@
 from http import HTTPStatus
 
-from . import base_test_class as cfg
+from . import base_test_class as fixtures
 
 OK = HTTPStatus.OK
 NOT_FOUND = HTTPStatus.NOT_FOUND
 FOUND = HTTPStatus.FOUND
 
 
-class TestRoutes(cfg.TestBaseClass):
+class TestRoutes(fixtures.TestBaseClass):
 
     def test_pages_availability(self):
         """
@@ -15,25 +15,25 @@ class TestRoutes(cfg.TestBaseClass):
         аутентифицированому и автору заметок.
         """
         for url, client_method, expected_status in [
-            (cfg.URL_HOME, self.client.get, OK),
-            (cfg.URL_LOGIN, self.client.get, OK),
-            (cfg.URL_LOGOUT, self.client.post, OK),
-            (cfg.URL_SIGNUP, self.client.get, OK),
-            (cfg.URL_LIST, self.author_client.get, OK),
-            (cfg.URL_ADD, self.author_client.get, OK),
-            (cfg.URL_SUCCESS, self.author_client.get, OK),
-            (cfg.URL_DETAIL, self.author_client.get, OK),
-            (cfg.URL_EDIT, self.author_client.get, OK),
-            (cfg.URL_DELETE, self.author_client.get, OK),
-            (cfg.URL_DETAIL, self.not_author_client.get, NOT_FOUND),
-            (cfg.URL_EDIT, self.not_author_client.get, NOT_FOUND),
-            (cfg.URL_DELETE, self.not_author_client.get, NOT_FOUND),
-            (cfg.URL_LIST, self.client.get, FOUND),
-            (cfg.URL_ADD, self.client.get, FOUND),
-            (cfg.URL_SUCCESS, self.client.get, FOUND),
-            (cfg.URL_DETAIL, self.client.get, FOUND),
-            (cfg.URL_EDIT, self.client.get, FOUND),
-            (cfg.URL_DELETE, self.client.get, FOUND),
+            (fixtures.HOME_URL, self.client.get, OK),
+            (fixtures.LOGIN_URL, self.client.get, OK),
+            (fixtures.LOGOUT_URL, self.client.post, OK),
+            (fixtures.SIGNUP_URL, self.client.get, OK),
+            (fixtures.LIST_URL, self.author_client.get, OK),
+            (fixtures.ADD_URL, self.author_client.get, OK),
+            (fixtures.SUCCESS_URL, self.author_client.get, OK),
+            (fixtures.DETAIL_URL, self.author_client.get, OK),
+            (fixtures.EDIT_URL, self.author_client.get, OK),
+            (fixtures.DELETE_URL, self.author_client.get, OK),
+            (fixtures.DETAIL_URL, self.not_author_client.get, NOT_FOUND),
+            (fixtures.EDIT_URL, self.not_author_client.get, NOT_FOUND),
+            (fixtures.DELETE_URL, self.not_author_client.get, NOT_FOUND),
+            (fixtures.LIST_URL, self.client.get, FOUND),
+            (fixtures.ADD_URL, self.client.get, FOUND),
+            (fixtures.SUCCESS_URL, self.client.get, FOUND),
+            (fixtures.DETAIL_URL, self.client.get, FOUND),
+            (fixtures.EDIT_URL, self.client.get, FOUND),
+            (fixtures.DELETE_URL, self.client.get, FOUND),
         ]:
             with self.subTest(url=url):
                 self.assertEqual(
@@ -46,12 +46,12 @@ class TestRoutes(cfg.TestBaseClass):
         авторизованных пользователей.
         """
         for url, redirect in [
-            [cfg.URL_LIST, cfg.URL_REDIRECT_LIST],
-            [cfg.URL_ADD, cfg.URL_REDIRECT_ADD],
-            [cfg.URL_SUCCESS, cfg.URL_REDIRECT_SUCCESS],
-            [cfg.URL_DETAIL, cfg.URL_REDIRECT_DETAIL],
-            [cfg.URL_EDIT, cfg.URL_REDIRECT_EDIT],
-            [cfg.URL_DELETE, cfg.URL_REDIRECT_DELETE]
+            [fixtures.LIST_URL, fixtures.REDIRECT_TO_LIST_URL],
+            [fixtures.ADD_URL, fixtures.REDIRECT_TO_ADD_URL],
+            [fixtures.SUCCESS_URL, fixtures.REDIRECT_TO_SUCCESS_URL],
+            [fixtures.DETAIL_URL, fixtures.REDIRECT_TO_DETAIL_URL],
+            [fixtures.EDIT_URL, fixtures.REDIRECT_TO_EDIT_URL],
+            [fixtures.DELETE_URL, fixtures.REDIRECT_TO_DELETE_URL]
         ]:
             with self.subTest(url=url):
                 self.assertRedirects(self.client.get(url), redirect)

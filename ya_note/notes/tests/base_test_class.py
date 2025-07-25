@@ -9,22 +9,22 @@ User = get_user_model()
 
 NOTE_SLUG = 'note_slug'
 
-URL_HOME = reverse('notes:home')
-URL_LOGIN = reverse('users:login')
-URL_LOGOUT = reverse('users:logout')
-URL_SIGNUP = reverse('users:signup')
-URL_LIST = reverse('notes:list')
-URL_ADD = reverse('notes:add')
-URL_SUCCESS = reverse('notes:success')
-URL_DETAIL = reverse('notes:detail', args=(NOTE_SLUG,))
-URL_EDIT = reverse('notes:edit', args=(NOTE_SLUG,))
-URL_DELETE = reverse('notes:delete', args=(NOTE_SLUG,))
-URL_REDIRECT_LIST = f'{URL_LOGIN}?next={URL_LIST}'
-URL_REDIRECT_ADD = f'{URL_LOGIN}?next={URL_ADD}'
-URL_REDIRECT_SUCCESS = f'{URL_LOGIN}?next={URL_SUCCESS}'
-URL_REDIRECT_DETAIL = f'{URL_LOGIN}?next={URL_DETAIL}'
-URL_REDIRECT_EDIT = f'{URL_LOGIN}?next={URL_EDIT}'
-URL_REDIRECT_DELETE = f'{URL_LOGIN}?next={URL_DELETE}'
+HOME_URL = reverse('notes:home')
+LOGIN_URL = reverse('users:login')
+LOGOUT_URL = reverse('users:logout')
+SIGNUP_URL = reverse('users:signup')
+LIST_URL = reverse('notes:list')
+ADD_URL = reverse('notes:add')
+SUCCESS_URL = reverse('notes:success')
+DETAIL_URL = reverse('notes:detail', args=(NOTE_SLUG,))
+EDIT_URL = reverse('notes:edit', args=(NOTE_SLUG,))
+DELETE_URL = reverse('notes:delete', args=(NOTE_SLUG,))
+REDIRECT_TO_LIST_URL = f'{LOGIN_URL}?next={LIST_URL}'
+REDIRECT_TO_ADD_URL = f'{LOGIN_URL}?next={ADD_URL}'
+REDIRECT_TO_SUCCESS_URL = f'{LOGIN_URL}?next={SUCCESS_URL}'
+REDIRECT_TO_DETAIL_URL = f'{LOGIN_URL}?next={DETAIL_URL}'
+REDIRECT_TO_EDIT_URL = f'{LOGIN_URL}?next={EDIT_URL}'
+REDIRECT_TO_DELETE_URL = f'{LOGIN_URL}?next={DELETE_URL}'
 
 
 class TestBaseClass(TestCase):
