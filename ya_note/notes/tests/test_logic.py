@@ -34,12 +34,12 @@ class TestLogic(TestBaseClass):
 
     def test_anonymous_user_cant_create_note(self):
         """Проверка, что анонимный пользователь не может создать заметку."""
-        notes_obj_before = set(Note.objects.all())
+        notes = set(Note.objects.all())
         self.assertRedirects(
             self.client.post(ADD_URL, data=self.form_data),
             REDIRECT_TO_ADD_URL
         )
-        self.assertEqual(notes_obj_before, set(Note.objects.all()))
+        self.assertEqual(notes, set(Note.objects.all()))
 
     def test_empty_slug(self):
         """
@@ -52,14 +52,14 @@ class TestLogic(TestBaseClass):
     def test_not_unique_slug(self):
         """Проверка невозможности создать две заметки с одинаковым slug."""
         self.form_data['slug'] = self.note.slug
-        notes_obj_before = set(Note.objects.all())
+        notes = set(Note.objects.all())
         self.assertFormError(
             self.author_client.post(
                 ADD_URL, data=self.form_data).context['form'],
             'slug',
             errors=(self.note.slug + WARNING)
         )
-        self.assertEqual(notes_obj_before, set(Note.objects.all()))
+        self.assertEqual(notes, set(Note.objects.all()))
 
     def test_author_can_edit_note(self):
         """Проверка, что автор может редактировать свои заметки."""
@@ -67,11 +67,11 @@ class TestLogic(TestBaseClass):
             self.author_client.post(EDIT_URL, self.form_data),
             SUCCESS_URL
         )
-        note_from_db = Note.objects.get(id=self.note.id)
-        self.assertEqual(note_from_db.title, self.form_data['title'])
-        self.assertEqual(note_from_db.text, self.form_data['text'])
-        self.assertEqual(note_from_db.slug, self.form_data['slug'])
-        self.assertEqual(note_from_db.author, self.author)
+        note = Note.objects.get(id=self.note.id)
+        self.assertEqual(note.title, self.form_data['title'])
+        self.assertEqual(note.text, self.form_data['text'])
+        self.assertEqual(note.slug, self.form_data['slug'])
+        self.assertEqual(note.author, self.note.author)
 
     def test_not_author_cant_edit_note(self):
         """Проверка, что заметку не может редактировать не автор."""
@@ -80,11 +80,11 @@ class TestLogic(TestBaseClass):
                 EDIT_URL, self.form_data).status_code,
             HTTPStatus.NOT_FOUND
         )
-        note_from_db = Note.objects.get(id=self.note.id)
-        self.assertEqual(note_from_db.title, self.note.title)
-        self.assertEqual(note_from_db.text, self.note.text)
-        self.assertEqual(note_from_db.slug, self.note.slug)
-        self.assertEqual(note_from_db.author, self.author)
+        note = Note.objects.get(id=self.note.id)
+        self.assertEqual(note.title, self.note.title)
+        self.assertEqual(note.text, self.note.text)
+        self.assertEqual(note.slug, self.note.slug)
+        self.assertEqual(note.author, self.note.author)
 
     def test_author_can_delete_note(self):
         """Проверка, что автор может удалить свою заметку."""
@@ -98,16 +98,14 @@ class TestLogic(TestBaseClass):
 
     def test_not_author_cant_delete_note(self):
         """Проверка, что не автор не может удалить чужую заметку."""
-        notes_obj_before = set(Note.objects.all())
-        notes_count_before = Note.objects.count()
+        notes = set(Note.objects.all())
         self.assertEqual(
             self.not_author_client.post(DELETE_URL).status_code,
             HTTPStatus.NOT_FOUND
         )
-        self.assertEqual(notes_count_before, Note.objects.count())
-        self.assertEqual(notes_obj_before, set(Note.objects.all()))
-        note_from_db = Note.objects.get(id=self.note.id)
-        self.assertEqual(note_from_db.title, self.note.title)
-        self.assertEqual(note_from_db.text, self.note.text)
-        self.assertEqual(note_from_db.slug, self.note.slug)
-        self.assertEqual(note_from_db.author, self.author)
+        self.assertEqual(notes, set(Note.objects.all()))
+        note = Note.objects.get(id=self.note.id)
+        self.assertEqual(note.title, self.note.title)
+        self.assertEqual(note.text, self.note.text)
+        self.assertEqual(note.slug, self.note.slug)
+        self.assertEqual(note.author, self.author)
